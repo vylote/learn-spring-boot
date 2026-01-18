@@ -3,10 +3,11 @@ package com.vlt.indentityservice.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 import java.time.LocalDate;
 
+@Data
 public class UserUpdateRequest {
     @NotBlank(message = "IS_BLANK")
     @Pattern(
@@ -28,36 +29,4 @@ public class UserUpdateRequest {
     private String lastName;
     @Past(message = "BIRTHDATE_INVALID")
     private LocalDate dob;
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public LocalDate getDob() {
-        return dob;
-    }
-
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
-    }
 }
