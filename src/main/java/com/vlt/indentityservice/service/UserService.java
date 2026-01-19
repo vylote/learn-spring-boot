@@ -2,70 +2,65 @@ package com.vlt.indentityservice.service;
 
 import com.vlt.indentityservice.dto.request.UserCreationRequest;
 import com.vlt.indentityservice.dto.request.UserUpdateRequest;
+import com.vlt.indentityservice.dto.response.UserResponse;
 import com.vlt.indentityservice.entity.User;
 import com.vlt.indentityservice.exceptiion.AppException;
 import com.vlt.indentityservice.exceptiion.ErrorCode;
+import com.vlt.indentityservice.mapper.UserMapper;
 import com.vlt.indentityservice.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
-    public User createUser(UserCreationRequest request) {
-        User user = new User();
-        if (userRepository.existsUserByUsername(request.getUsername())) {
+    UserMapper userMapper;
+
+    public UserResponse createUser(UserCreationRequest request) {
+        if (userRepository.existsUserByUsername(request.getUsername()))
             throw new AppException(ErrorCode.USER_EXITED);
-        }
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setLastName(request.getLastName());
-        user.setFirstName(request.getFirstName());
-        user.setDob(request.getDob());
 
-        return userRepository.save(user);
+        User user = userMapper.toUser(request);
+
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getUsers() {
+        return userMapper.toUsersResponse(userRepository.findAll());
     }
 
-    public User getUser(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    public UserResponse getUser(Long id) {
+        return userMapper.toUserResponse(userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
     }
 
-    public List<User> getUsersByUsername(String username) {
+    public List<UserResponse> getUsersByUsername(String username) {
         List<User> users = userRepository.findByUsernameContaining(username);
         if (users.isEmpty()) {
             throw new AppException(ErrorCode.USER_NOT_FOUND);
         }
-        return users;
+        return userMapper.toUsersResponse(users);
     }
 
     public void deleteUser(long id) {
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
-        } else {
-            throw new AppException(ErrorCode.USER_NOT_FOUND);
-        }
+        userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        userRepository.deleteById(id);
     }
 
-    public void updateUser(UserUpdateRequest request, long id) {
-        if (userRepository.existsById(id)) {
-            User user = userRepository.findById(id).get();
+    public UserResponse updateUser(UserUpdateRequest request, long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-            user.setPassword(request.getPassword());
-            user.setLastName(request.getLastName());
-            user.setFirstName(request.getFirstName());
-            user.setDob(request.getDob());
-            userRepository.save(user);
-        } else {
-            throw new AppException(ErrorCode.USER_NOT_FOUND);
-        }
+        userMapper.updateUser(request, user);
+
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 }

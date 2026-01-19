@@ -1,8 +1,18 @@
 package com.vlt.indentityservice.exceptiion;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public enum ErrorCode {
     UNCATEGORY_EXCEPTION(9999, "Uncategory error"),
-    INVALID_KEY(1000, "Uncategory error"),
+    INVALID_KEY(999, "Uncategory error"),
     USER_EXITED(1001, "User exited"),
     USER_NOT_FOUND(1002, "User Not Found"),
     USERNAME_INVALID_LENGTH(1003, "Username at least 3 characters"),
@@ -14,19 +24,6 @@ public enum ErrorCode {
     LASTNAME_INVALID_CHARACTER(1008, "Lastname can only contain letters"),
     BIRTHDATE_INVALID(1009, "Birthdate can be in the future"),
     ;
-    private int code;
-    private String message;
-
-    ErrorCode(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
+    int code;
+    String message;
 }

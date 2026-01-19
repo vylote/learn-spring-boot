@@ -1,6 +1,6 @@
 package com.vlt.indentityservice.exceptiion;
 
-import com.vlt.indentityservice.dto.request.ApiResponse;
+import com.vlt.indentityservice.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

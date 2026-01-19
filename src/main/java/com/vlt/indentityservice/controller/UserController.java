@@ -1,53 +1,66 @@
 package com.vlt.indentityservice.controller;
 
-import com.vlt.indentityservice.dto.request.ApiResponse;
+import com.vlt.indentityservice.dto.response.ApiResponse;
 import com.vlt.indentityservice.dto.request.UserCreationRequest;
 import com.vlt.indentityservice.dto.request.UserUpdateRequest;
-import com.vlt.indentityservice.entity.User;
+import com.vlt.indentityservice.dto.response.UserResponse;
 import com.vlt.indentityservice.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
-    @Autowired
-    private UserService userService;
 
-    @PostMapping
-    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
-        ApiResponse<User> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.createUser(request));
-        return apiResponse;
+    UserService userService;
+
+    @PostMapping("/create")
+    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.createUser(request))
+                .build();
     }
 
-    @GetMapping
-    List<User> getUsers() {
-        return userService.getUsers();
+    @GetMapping("/list")
+    public ApiResponse<List<UserResponse>> getUsers() {
+        return ApiResponse.<List<UserResponse>>builder()
+                .result(userService.getUsers())
+                .build();
     }
 
     @GetMapping("/{id}")
-    User getUser(@PathVariable("id") Long id) {
-        return userService.getUser(id);
+    public ApiResponse<UserResponse> getUser(@PathVariable("id") Long id) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getUser(id))
+                .build();
     }
 
     @GetMapping("/username/{username}")
-    List<User> getUsersByUsername(@PathVariable("username") String username) {
-        return userService.getUsersByUsername(username);
+    public ApiResponse<List<UserResponse>> getUsersByUsername(@PathVariable("username") String username) {
+        return ApiResponse.<List<UserResponse>>builder()
+                .result(userService.getUsersByUsername(username))
+                .build();
     }
 
     @DeleteMapping("/delete/{id}")
-    String deleteUser(@PathVariable("id") long id) {
+    public ApiResponse<String> deleteUser(@PathVariable("id") long id) {
         userService.deleteUser(id);
-        return "User deleted";
+        return ApiResponse.<String>builder()
+                .result("User deleted")
+                .build();
     }
 
     @PutMapping("/update/{id}")
-    String updateUser(@RequestBody @Valid UserUpdateRequest request, @PathVariable("id") long id) {
-        userService.updateUser(request, id);
-        return "User updated";
+    public ApiResponse<UserResponse> updateUser(@RequestBody @Valid UserUpdateRequest request, @PathVariable("id") long id) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.updateUser(request, id))
+                .build();
     }
 }
