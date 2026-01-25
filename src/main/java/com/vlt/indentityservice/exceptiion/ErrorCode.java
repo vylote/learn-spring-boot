@@ -23,6 +23,7 @@ public enum ErrorCode {
     FIRSTNAME_INVALID_CHARACTER(1007, "Firstname can only contain letters and numbers"),
     LASTNAME_INVALID_CHARACTER(1008, "Lastname can only contain letters"),
     BIRTHDATE_INVALID(1009, "Birthdate can be in the future"),
+    UNAUTHENTICATED(1010, "Unauthenticated"),
     ;
     int code;
     String message;
