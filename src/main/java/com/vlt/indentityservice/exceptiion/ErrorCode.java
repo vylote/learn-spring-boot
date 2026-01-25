@@ -13,10 +13,10 @@ import lombok.experimental.FieldDefaults;
 public enum ErrorCode {
     UNCATEGORY_EXCEPTION(9999, "Uncategory error"),
     INVALID_KEY(999, "Uncategory error"),
-    USER_EXITED(1001, "User exited"),
-    USER_NOT_FOUND(1002, "User Not Found"),
+    USER_EXISTED(1001, "User existed"),
+    USER_NOT_EXISTED(1002, "User not existed"),
     USERNAME_INVALID_LENGTH(1003, "Username at least 3 characters"),
-    IS_BLANK(1004, "Username not empty"),
+    IS_BLANK(1004, "Information not empty"),
     USERNAME_INVALID_CHARACTER(1005, "Username can only contain at least a letter and numbers"),
     PASSWORD_INVALID_CHARACTER(1006, "Password must have lowercase, uppercase letter, number, " +
             "special character (@,#,$,!,%,*,?,&) and at least 8 characters"),

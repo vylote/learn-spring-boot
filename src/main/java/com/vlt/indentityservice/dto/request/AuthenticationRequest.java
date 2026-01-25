@@ -1,19 +1,14 @@
-package com.vlt.indentityservice.dto.response;
+package com.vlt.indentityservice.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
-    long id;
-    String firstName;
-    String lastName;
+public class AuthenticationRequest {
+    String username;
     String password;
-    LocalDate dob;
 }
