@@ -28,7 +28,7 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/list")
+    @GetMapping
     public ApiResponse<List<UserResponse>> getUsers() {
         return ApiResponse.<List<UserResponse>>builder()
                 .result(userService.getUsers())

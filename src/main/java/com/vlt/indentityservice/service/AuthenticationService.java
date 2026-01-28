@@ -36,7 +36,9 @@ public class AuthenticationService {
 
     @NonFinal
     @Value("${jwt.signerKey}")
-    protected static String SIGNER_KEY;
+    /*Annotation @Value không hoạt động với biến static. Spring chỉ inject được giá trị vào các biến của
+    Instance (đối tượng), còn biến static thuộc về Class nên Spring sẽ bỏ qua.*/
+    protected String SIGNER_KEY;
 
     public IntrospectResponse introspect(IntrospectRequest request)
             throws JOSEException, ParseException {

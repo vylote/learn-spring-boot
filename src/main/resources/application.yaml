@@ -9,5 +9,5 @@ spring:
     username: root
     password: 3821
 
-  jwt:
-    signerKey: "43ab416fea1699c2b31425bef5d24064c84273dda4647e9e5adbb64b0d3dfb54"
+jwt:
+  signerKey: "43ab416fea1699c2b31425bef5d24064c84273dda4647e9e5adbb64b0d3dfb54"
