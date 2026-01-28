@@ -22,22 +22,27 @@ public class SecurityConfig {
     @Value("${jwt.signerKey}")
     private String signerKey;
     // 1. Giữ lại Bean này để dùng mã hóa mật khẩu trong Service/Mapper của bạn
+
+    private final String[] PUBLIC_ENDPOINT = {
+            "/users/create", "/auth/token", "/auth/introspect"
+    };
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
-    // 2. Cấu hình này giúp "mở khóa" các API để bạn không bị hỏi mật khẩu ngẫu nhiên nữa
+
+    // 2. Cấu hình này giúp "mở khóa" các API để bạn không bị hỏi mật khẩu ngẫu
+    // nhiên nữa
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(request -> request
-                .requestMatchers(HttpMethod.POST, "/users/create").permitAll()
-                .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder()))
-            )
-            .csrf(AbstractHttpConfigurer::disable);                
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
+                        .anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())))
+                .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
