@@ -4,6 +4,7 @@ import com.vlt.indentityservice.dto.request.UserCreationRequest;
 import com.vlt.indentityservice.dto.request.UserUpdateRequest;
 import com.vlt.indentityservice.dto.response.UserResponse;
 import com.vlt.indentityservice.entity.User;
+import com.vlt.indentityservice.enums.Role;
 import com.vlt.indentityservice.exceptiion.AppException;
 import com.vlt.indentityservice.exceptiion.ErrorCode;
 import com.vlt.indentityservice.mapper.UserMapper;
@@ -14,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -30,6 +32,11 @@ public class UserService {
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+
+        user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
