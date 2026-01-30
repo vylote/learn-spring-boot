@@ -12,7 +12,10 @@ import com.vlt.indentityservice.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
@@ -43,11 +47,26 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    public UserResponse getMyInfo() {
+        // 1. Lấy username từ context (do Filter đã giải mã token và nhét vào đây)
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+
+        User user = userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        return userMapper.toUserResponse(user);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getUsers() {
+        log.info("In method getUsers");
         return userMapper.toUsersResponse(userRepository.findAll());
     }
 
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(Long id) {
+        log.info("In method getUser by id");
         return userMapper.toUserResponse(userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
@@ -74,7 +93,7 @@ public class UserService {
         String currentUsername = authentication.getName();
 
         boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("SCOPE_ADMIN"));
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
         if (!user.getUsername().equals(currentUsername) && !isAdmin) {
             throw new AppException(ErrorCode.UNAUTHORIZED);
