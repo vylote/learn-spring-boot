@@ -7,7 +7,11 @@ spring:
   datasource:
     url: "jdbc:mysql://localhost:3306/identity_service"
     username: root
-    password: 3821
+    password: "3821"
+  jpa:
+    hibernate:
+      ddl-auto: update # tự tạo user_roles
+    show-sql: true #xem log  
 
 jwt:
   signerKey: "43ab416fea1699c2b31425bef5d24064c84273dda4647e9e5adbb64b0d3dfb54"

@@ -12,6 +12,8 @@ import com.vlt.indentityservice.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +69,16 @@ public class UserService {
 
     public UserResponse updateUser(UserUpdateRequest request, long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("SCOPE_ADMIN"));
+
+        if (!user.getUsername().equals(currentUsername) && !isAdmin) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }                
 
         userMapper.updateUser(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));

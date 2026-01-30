@@ -14,46 +14,66 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.vlt.indentityservice.enums.Role;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Value("${jwt.signerKey}")
-    private String signerKey;
-    // 1. Giữ lại Bean này để dùng mã hóa mật khẩu trong Service/Mapper của bạn
+        @Value("${jwt.signerKey}")
+        private String signerKey;
+        // 1. Giữ lại Bean này để dùng mã hóa mật khẩu trong Service/Mapper của bạn
 
-    private final String[] PUBLIC_ENDPOINT = {
-            "/users/create", "/auth/token", "/auth/introspect"
-    };
+        private final String[] PUBLIC_ENDPOINT = {
+                        "/auth/token", "/auth/introspect"
+        };
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
+        @Bean
+        PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder(10);
+        }
 
-    // 2. Cấu hình này giúp "mở khóa" các API để bạn không bị hỏi mật khẩu ngẫu
-    // nhiên nữa
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
-                        .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())))
-                .csrf(AbstractHttpConfigurer::disable);
+        // 2. Cấu hình này giúp "mở khóa" các API để bạn không bị hỏi mật khẩu ngẫu
+        // nhiên nữa
+        @Bean
+        SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                http.authorizeHttpRequests(request -> 
+                        request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
+                                .requestMatchers(HttpMethod.GET, "/users/create", "/users")
+                                // .hasAuthority("ROLE_ADMIN")
+                                .hasRole(Role.ADMIN.name())
 
-        return http.build();
-    }
+                                .anyRequest().authenticated());
+                http.oauth2ResourceServer(oauth2 -> 
+                        oauth2.jwt(jwtConfigurer -> 
+                                jwtConfigurer.decoder(jwtDecoder())
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                http.csrf(AbstractHttpConfigurer::disable);
 
-    // BEAN QUAN TRỌNG ĐỂ ĐỌC TOKEN:
-    @Bean
-    JwtDecoder jwtDecoder() {
-        // Đảm bảo thuật toán (HS512) khớp với thuật toán lúc bạn tạo token
-        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
-        return NimbusJwtDecoder.withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
-    }
+                return http.build();
+        }
+
+        @Bean
+        JwtAuthenticationConverter jwtAuthenticationConverter() {
+                JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+                jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+                JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+                jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+
+                return jwtAuthenticationConverter;
+        }
+
+        // BEAN QUAN TRỌNG ĐỂ ĐỌC TOKEN:
+        @Bean
+        JwtDecoder jwtDecoder() {
+                // Đảm bảo thuật toán (HS512) khớp với thuật toán lúc bạn tạo token
+                SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
+                return NimbusJwtDecoder.withSecretKey(secretKeySpec)
+                                .macAlgorithm(MacAlgorithm.HS512)
+                                .build();
+        }
 }

@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 public enum ErrorCode {
     UNCATEGORY_EXCEPTION(9999, "Uncategory error"),
     INVALID_KEY(999, "Uncategory error"),
+    UNAUTHORIZED(403, "You don't have permission to do that"),
     USER_EXISTED(1001, "User existed"),
     USER_NOT_EXISTED(1002, "User not existed"),
     USERNAME_INVALID_LENGTH(1003, "Username at least 3 characters"),
