@@ -17,12 +17,14 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
 import com.vlt.indentityservice.enums.Role;
+
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+        
         @Value("${jwt.signerKey}")
         private String signerKey;
         // 1. Giữ lại Bean này để dùng mã hóa mật khẩu trong Service/Mapper của bạn
@@ -31,6 +33,7 @@ public class SecurityConfig {
                         "/auth/token", "/auth/introspect"
         };
 
+  
         @Bean
         PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder(10);
@@ -40,16 +43,14 @@ public class SecurityConfig {
         // nhiên nữa
         @Bean
         SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-                http.authorizeHttpRequests(request -> 
-                        request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
-                                .requestMatchers(HttpMethod.GET, "/users/create", "/users")
-                                // .hasAuthority("ROLE_ADMIN")
-                                .hasRole(Role.ADMIN.name())
+                http.authorizeHttpRequests(
+                                request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/users/create", "/users")
+                                                // .hasAuthority("ROLE_ADMIN")
+                                                .hasRole(Role.ADMIN.name())
 
-                                .anyRequest().authenticated());
-                http.oauth2ResourceServer(oauth2 -> 
-                        oauth2.jwt(jwtConfigurer -> 
-                                jwtConfigurer.decoder(jwtDecoder())
+                                                .anyRequest().authenticated());
+                http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())));
                 http.csrf(AbstractHttpConfigurer::disable);
 
