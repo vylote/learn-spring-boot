@@ -45,15 +45,19 @@ public class SecurityConfig {
         // nhiên nữa
         @Bean
         SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-                http.authorizeHttpRequests(
-                                request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
-                                                .requestMatchers(HttpMethod.GET, "/users/create", "/users")
-                                                // .hasAuthority("ROLE_ADMIN")
-                                                .hasRole(Role.ADMIN.name())
+                http.authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/create")
+                        // .hasAuthority("ROLE_ADMIN")
+                        .hasRole(Role.ADMIN.name())
 
-                                                .anyRequest().authenticated());
-                http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                        .anyRequest().authenticated());
+                http.oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwtConfigurer -> 
+                                jwtConfigurer.decoder(jwtDecoder())
+                                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                                .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                );
                 http.csrf(AbstractHttpConfigurer::disable);
 
                 return http.build();

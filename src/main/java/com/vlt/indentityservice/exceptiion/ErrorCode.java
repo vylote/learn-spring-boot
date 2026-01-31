@@ -1,31 +1,44 @@
 package com.vlt.indentityservice.exceptiion;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public enum ErrorCode {
-    UNCATEGORY_EXCEPTION(9999, "Uncategory error"),
-    INVALID_KEY(999, "Uncategory error"),
-    UNAUTHORIZED(403, "You don't have permission to do that"),
-    USER_EXISTED(1001, "User existed"),
-    USER_NOT_EXISTED(1002, "User not existed"),
-    USERNAME_INVALID_LENGTH(1003, "Username at least 3 characters"),
-    IS_BLANK(1004, "Information not empty"),
-    USERNAME_INVALID_CHARACTER(1005, "Username can only contain at least a letter and numbers"),
-    PASSWORD_INVALID_CHARACTER(1006, "Password must have lowercase, uppercase letter, number, " +
-            "special character (@,#,$,!,%,*,?,&) and at least 8 characters"),
-    FIRSTNAME_INVALID_CHARACTER(1007, "Firstname can only contain letters and numbers"),
-    LASTNAME_INVALID_CHARACTER(1008, "Lastname can only contain letters"),
-    BIRTHDATE_INVALID(1009, "Birthdate can be in the future"),
-    UNAUTHENTICATED(1010, "Unauthenticated"),
+    // --- Nhóm Lỗi Hệ Thống & Bảo Mật (5xx, 401, 403) ---
+    UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR), // 500
+    UNAUTHENTICATED(1010, "Unauthenticated", HttpStatus.UNAUTHORIZED), // 401: Chưa đăng nhập
+    UNAUTHORIZED(1009, "You don't have permission to do that", HttpStatus.FORBIDDEN), // 403: Đăng nhập rồi nhưng k có quyền
+    INVALID_KEY(999, "Invalid message key", HttpStatus.BAD_REQUEST), // 400: Lỗi dev sai key
+
+    // --- Nhóm Lỗi Tài Nguyên (404, 409) ---
+    // Dùng 409 Conflict cho trường hợp dữ liệu đã tồn tại (trùng username, email...)
+    RESOURCE_EXISTED(1001, "Resource already existed", HttpStatus.CONFLICT), 
+    
+    // Dùng 404 Not Found khi không tìm thấy dữ liệu
+    RESOURCE_NOT_FOUND(1002, "Resource not found", HttpStatus.NOT_FOUND), 
+
+    // --- Nhóm Validate Dữ Liệu Đầu Vào (400 Bad Request) ---
+    // Tất cả lỗi liên quan đến Form nhập liệu thường trả về 400
+    MISSING_REQUIRED_FIELD(1004, "Required field is missing", HttpStatus.BAD_REQUEST), 
+    INVALID_LENGTH(1003, "Input length is invalid", HttpStatus.BAD_REQUEST), 
+    INVALID_FORMAT(1005, "Input format is invalid", HttpStatus.BAD_REQUEST), 
+    INVALID_DOB(1009, "Your age must be at least {min}", HttpStatus.BAD_REQUEST), 
+    
+    // Thêm cái này nếu bạn tách lỗi password yếu ra riêng như đã bàn
+    WEAK_PASSWORD(1006, "Password is too weak", HttpStatus.BAD_REQUEST),
     ;
+
     int code;
     String message;
+    HttpStatusCode statusCode;
 }

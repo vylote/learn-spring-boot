@@ -34,7 +34,7 @@ public class UserService {
 
     public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsUserByUsername(request.getUsername()))
-            throw new AppException(ErrorCode.USER_EXISTED);
+            throw new AppException(ErrorCode.RESOURCE_EXISTED);
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -53,7 +53,7 @@ public class UserService {
         String name = authentication.getName();
 
         User user = userRepository.findByUsername(name)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
 
         return userMapper.toUserResponse(user);
     }
@@ -68,26 +68,26 @@ public class UserService {
     public UserResponse getUser(Long id) {
         log.info("In method getUser by id");
         return userMapper.toUserResponse(userRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND)));
     }
 
     public List<UserResponse> getUsersByUsername(String username) {
         List<User> users = userRepository.findByUsernameContaining(username);
         if (users.isEmpty()) {
-            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+            throw new AppException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         return userMapper.toUsersResponse(users);
     }
 
     public void deleteUser(long id) {
         userRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
 
         userRepository.deleteById(id);
     }
 
     public UserResponse updateUser(UserUpdateRequest request, long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();

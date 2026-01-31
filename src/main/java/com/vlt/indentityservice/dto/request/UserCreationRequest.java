@@ -12,35 +12,42 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
-    @Size(min = 3, message = "USERNAME_INVALID_LENGH")
-    @NotBlank(message = "IS_BLANK")
+
+    // --- USERNAME ---
+    @Size(min = 3, message = "INVALID_LENGTH") // Dùng chung cho lỗi độ dài
+    @NotBlank(message = "MISSING_REQUIRED_FIELD") // Dùng chung cho lỗi bỏ trống
     @Pattern(
             regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9]+$",
-            message = "USERNAME_INVALID_CHARACTER"
+            message = "INVALID_FORMAT" // Dùng chung cho lỗi sai định dạng (regex)
     )
     String username;
 
-    @NotBlank(message = "IS_BLANK")
+    // --- PASSWORD ---
+    @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
+            // Giữ nguyên regex độ khó mật khẩu của bạn
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%*?&])[A-Za-z\\d@#$!%*?&]{8,}$",
-            message = "PASSWORD_INVALID_CHARACTER"
+            message = "WEAK_PASSWORD" // Riêng mật khẩu nên để 1 mã riêng vì nó đặc thù
     )
     String password;
 
-    @NotBlank(message = "IS_BLANK")
+    // --- FIRSTNAME ---
+    @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             regexp = "^[a-zA-Z]+$",
-            message = "FIRSTNAME_INVALID_CHARACTER"
+            message = "INVALID_FORMAT" // Tái sử dụng INVALID_FORMAT
     )
     String firstName;
 
-    @NotBlank(message = "IS_BLANK")
+    // --- LASTNAME ---
+    @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             regexp = "^[a-zA-Z]+$",
-            message = "LASTNAME_INVALID_CHARACTER"
+            message = "INVALID_FORMAT" // Tái sử dụng INVALID_FORMAT
     )
     String lastName;
 
-    @Past(message = "BIRTHDATE_INVALID")
+    // --- DOB ---
+    @Past(message = "INVALID_DOB")
     LocalDate dob;
 }

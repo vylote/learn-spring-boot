@@ -14,27 +14,37 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-    @NotBlank(message = "IS_BLANK")
+    
+    // --- PASSWORD ---
+    // Thay IS_BLANK -> MISSING_REQUIRED_FIELD
+    @NotBlank(message = "MISSING_REQUIRED_FIELD")
+    // Thay PASSWORD_INVALID_CHARACTER -> WEAK_PASSWORD (Giữ riêng để báo lỗi chi tiết)
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%*?&])[A-Za-z\\d@#$!%*?&]{8,}$",
-            message = "PASSWORD_INVALID_CHARACTER"
+            message = "WEAK_PASSWORD"
     )
     String password;
 
-    @NotBlank(message = "IS_BLANK")
+    // --- FIRSTNAME ---
+    @NotBlank(message = "MISSING_REQUIRED_FIELD")
+    // Gom nhóm lỗi định dạng về INVALID_FORMAT
     @Pattern(
             regexp = "^[a-zA-Z]+$",
-            message = "FIRSTNAME_INVALID_CHARACTER"
+            message = "INVALID_FORMAT"
     )
     String firstName;
 
-    @NotBlank(message = "IS_BLANK")
+    // --- LASTNAME ---
+    @NotBlank(message = "MISSING_REQUIRED_FIELD")
+    // Gom nhóm lỗi định dạng về INVALID_FORMAT
     @Pattern(
             regexp = "^[a-zA-Z]+$",
-            message = "LASTNAME_INVALID_CHARACTER"
+            message = "INVALID_FORMAT"
     )
     String lastName;
 
-    @Past(message = "BIRTHDATE_INVALID")
+    // --- DOB ---
+    // Dùng key INVALID_DOB như đã định nghĩa trong Enum
+    @Past(message = "INVALID_DOB")
     LocalDate dob;
 }
