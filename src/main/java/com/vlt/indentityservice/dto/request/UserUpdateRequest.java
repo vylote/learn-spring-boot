@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-    
     // --- PASSWORD ---
     // Thay IS_BLANK -> MISSING_REQUIRED_FIELD
     @NotBlank(message = "MISSING_REQUIRED_FIELD")

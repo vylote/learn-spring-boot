@@ -86,22 +86,28 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse updateUser(UserUpdateRequest request, long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
-
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName();
-
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
-        if (!user.getUsername().equals(currentUsername) && !isAdmin) {
-            throw new AppException(ErrorCode.UNAUTHORIZED);
-        }                
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));       
 
         userMapper.updateUser(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    public UserResponse updateMyInfo(UserUpdateRequest request) {
+        // 1. Lấy username từ context (do Filter đã giải mã token và nhét vào đây)
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+
+        User user = userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+
+        userMapper.updateUser(request, user);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        return userMapper.toUserResponse(user);
     }
 }

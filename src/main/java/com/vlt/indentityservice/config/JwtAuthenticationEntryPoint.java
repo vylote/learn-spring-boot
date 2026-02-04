@@ -15,11 +15,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import tools.jackson.databind.ObjectMapper;
 
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint{
-
+    //khi gặp lỗi 401 spring kiểm tra xem có authentication entry point không, nếu có nó sẽ chạy hàm commence
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
-        // TODO Auto-generated method stub
         ErrorCode errorCode = ErrorCode.UNAUTHENTICATED;
         
         response.setStatus(errorCode.getStatusCode().value());
@@ -30,9 +29,14 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint{
                 .message(errorCode.getMessage())
                 .build();
 
+        /* tại sao phải làm dòng này mà không return apiResponse như trong controller vì hàm commence nằm ở tầng
+        Filter (Servlet) thấp hơn Controller không có spring hỗ trợ tự convert object sang json */
+        
+        //Đây là thư viện Jackson. Nó giúp biến đổi (Serialize) một Java Object (apiResponse) thành một chuỗi String JSON ({"code": 1010...}).
         ObjectMapper objectMapper = new ObjectMapper();
-                
+        //Chúng ta phải tự tay ghi chuỗi JSON đó vào luồng phản hồi
         response.getWriter().write(objectMapper.writeValueAsString(apiResponse));   
+        //Đẩy dữ liệu đi ngay lập tức về phía Client, đảm bảo không bị kẹt lại trong bộ nhớ đệm server.
         response.flushBuffer();             
     }
     

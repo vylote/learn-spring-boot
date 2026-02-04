@@ -32,7 +32,7 @@ public class SecurityConfig {
         // 1. Giữ lại Bean này để dùng mã hóa mật khẩu trong Service/Mapper của bạn
 
         private final String[] PUBLIC_ENDPOINT = {
-                        "/auth/token", "/auth/introspect"
+                "/auth/token", "/auth/introspect"
         };
 
   
@@ -52,10 +52,13 @@ public class SecurityConfig {
                         .hasRole(Role.ADMIN.name())
 
                         .anyRequest().authenticated());
+                //Cấu hình server này trở thành một Resource Server sử dụng chuẩn OAuth2 (cụ thể là JWT) để xác thực người dùng.
                 http.oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwtConfigurer -> 
                                 jwtConfigurer.decoder(jwtDecoder())
                                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                                /* Xử lý lỗi 401 (Unauthenticated) nếu người dùng gửi token rác, hết hạn, không gửi
+                                thì hệ thống sẽ gọi class JwtAuthenticationConverter trả mã đẹp */
                                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 );
                 http.csrf(AbstractHttpConfigurer::disable);
