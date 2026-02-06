@@ -42,7 +42,7 @@ public class UserService {
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
 
-        user.setRoles(roles);
+        // user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -65,7 +65,7 @@ public class UserService {
     }
 
     @PostAuthorize("returnObject.username == authentication.name")
-    public UserResponse getUser(Long id) {
+    public UserResponse getUser(String id) {
         log.info("In method getUser by id");
         return userMapper.toUserResponse(userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND)));
@@ -79,7 +79,7 @@ public class UserService {
         return userMapper.toUsersResponse(users);
     }
 
-    public void deleteUser(long id) {
+    public void deleteUser(String id) {
         userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
 
@@ -87,7 +87,7 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public UserResponse updateUser(UserUpdateRequest request, long id) {
+    public UserResponse updateUser(UserUpdateRequest request, String id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));       
 

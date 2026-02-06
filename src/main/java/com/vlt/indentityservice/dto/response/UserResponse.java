@@ -6,6 +6,8 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.vlt.indentityservice.entity.Role;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,5 +19,5 @@ public class UserResponse {
     String firstName;
     String lastName;
     LocalDate dob;
-    Set<String> roles;
+    Set<Role> roles;
 }
