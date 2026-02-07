@@ -9,5 +9,5 @@ import com.vlt.indentityservice.entity.Permission;
 @Mapper(componentModel = "spring")
 public interface PermissionMapper {
     Permission toPermission(PermissionRequest request);
-    PermissionResponse tPermissionResponse(Permission permission);
+    PermissionResponse toPermissionResponse(Permission permission);
 }

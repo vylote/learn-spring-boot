@@ -1,5 +1,18 @@
 package com.vlt.indentityservice.dto.response;
 
-public class PermissionResponse {
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class PermissionResponse {
+    String name;        // Trả về tên quyền vừa tạo
+    String description;
 }

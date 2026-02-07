@@ -7,7 +7,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 import com.vlt.indentityservice.dto.response.ApiResponse;
-import com.vlt.indentityservice.exceptiion.ErrorCode;
+import com.vlt.indentityservice.exception.ErrorCode;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
