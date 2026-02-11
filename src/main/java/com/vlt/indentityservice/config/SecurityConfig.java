@@ -18,7 +18,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import com.vlt.indentityservice.enums.Role;
+import com.vlt.indentityservice.enums.PredefinedRole;
 
 
 @Configuration
@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/create")
                         // .hasAuthority("ROLE_ADMIN")
-                        .hasRole(Role.ADMIN.name())
+                        .hasRole(PredefinedRole.ADMIN.name())
 
                         .anyRequest().authenticated());
                 //Cấu hình server này trở thành một Resource Server sử dụng chuẩn OAuth2 (cụ thể là JWT) để xác thực người dùng.

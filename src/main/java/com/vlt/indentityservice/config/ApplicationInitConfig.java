@@ -2,13 +2,15 @@ package com.vlt.indentityservice.config;
 
 import java.util.HashSet;
 
+import com.vlt.indentityservice.entity.Role;
+import com.vlt.indentityservice.repository.RoleRepository;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.vlt.indentityservice.entity.User;
-import com.vlt.indentityservice.enums.Role;
+import com.vlt.indentityservice.enums.PredefinedRole;
 import com.vlt.indentityservice.repository.UserRepository;
 
 import lombok.AccessLevel;
@@ -25,16 +27,36 @@ public class ApplicationInitConfig {
     PasswordEncoder passwordEncoder;
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository) {
+    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
         return args -> {
+            // 1. Luôn đảm bảo Role USER đã tồn tại (cho người dùng đăng ký sau này dùng)
+            if (roleRepository.findById(PredefinedRole.USER.name()).isEmpty()) {
+                roleRepository.save(Role.builder()
+                        .name(PredefinedRole.USER.name())
+                        .description("User role")
+                        .build());
+            }
+
             if (userRepository.findByUsername("admin").isEmpty()) {
-                var roles = new HashSet<String>();
-                roles.add(Role.ADMIN.name());
-                
+                String adminRoleName = PredefinedRole.ADMIN.name();
+
+                // 2. Tìm Role ADMIN trong DB. Nếu chưa có thì tạo mới và lưu xuống DB
+                Role adminRole = roleRepository.findById(adminRoleName)
+                        .orElseGet(() -> roleRepository.save(
+                                Role.builder()
+                                        .name(adminRoleName)
+                                        .description("System Administrator") // Thêm mô tả nếu thích
+                                        .build()
+                        ));
+
+                // 3. Tạo Set chứa Entity Role (Không phải String nữa)
+                var roles = new HashSet<Role>();
+                roles.add(adminRole);
+
                 User user = User.builder()
                             .username("admin")
                             .password(passwordEncoder.encode("admin"))
-                            // .roles(roles)
+                             .roles(roles)
                             .build();
 
                 userRepository.save(user);

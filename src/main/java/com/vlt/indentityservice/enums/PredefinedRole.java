@@ -1,6 +1,6 @@
 package com.vlt.indentityservice.enums;
 
-public enum Role {
+public enum PredefinedRole {
     ADMIN,
     USER
 }
