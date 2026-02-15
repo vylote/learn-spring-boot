@@ -3,11 +3,13 @@ package com.vlt.indentityservice.service;
 import com.vlt.indentityservice.dto.request.UserCreationRequest;
 import com.vlt.indentityservice.dto.request.UserUpdateRequest;
 import com.vlt.indentityservice.dto.response.UserResponse;
+import com.vlt.indentityservice.entity.Role;
 import com.vlt.indentityservice.entity.User;
-import com.vlt.indentityservice.enums.Role;
+import com.vlt.indentityservice.enums.PredefinedRole;
 import com.vlt.indentityservice.exception.AppException;
 import com.vlt.indentityservice.exception.ErrorCode;
 import com.vlt.indentityservice.mapper.UserMapper;
+import com.vlt.indentityservice.repository.RoleRepository;
 import com.vlt.indentityservice.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import java.util.List;
 @Slf4j
 public class UserService {
     UserRepository userRepository;
+    RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
@@ -39,10 +42,11 @@ public class UserService {
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
+        var roles = new HashSet<Role>();
 
-        // user.setRoles(roles);
+        roleRepository.findById(PredefinedRole.USER.name())
+                .ifPresent(roles::add);
+        user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -108,6 +112,6 @@ public class UserService {
         userMapper.updateUser(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        return userMapper.toUserResponse(user);
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 }

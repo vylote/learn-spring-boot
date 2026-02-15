@@ -14,10 +14,10 @@ import com.vlt.indentityservice.entity.Role;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
-    long id;
+    String id;
     String username;
     String firstName;
     String lastName;
     LocalDate dob;
-    Set<Role> roles;
+    Set<String> roles;
 }

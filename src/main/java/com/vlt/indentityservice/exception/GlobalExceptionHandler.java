@@ -1,17 +1,22 @@
 package com.vlt.indentityservice.exception;
 
 import com.vlt.indentityservice.dto.response.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException e) {
+        // BẮT BUỘC THÊM DÒNG NÀY ĐỂ IN LỖI RA MÀN HÌNH CONSOLE
+        log.error("BẮT ĐƯỢC THỦ PHẠM GÂY LỖI 9999: ", e);
+
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
