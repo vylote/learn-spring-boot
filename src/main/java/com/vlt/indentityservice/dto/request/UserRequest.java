@@ -5,13 +5,14 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserCreationRequest {
+public class UserRequest {
 
     // --- USERNAME ---
     @Size(min = 3, message = "INVALID_LENGTH") // Dùng chung cho lỗi độ dài
@@ -50,4 +51,6 @@ public class UserCreationRequest {
     // --- DOB ---
     @Past(message = "INVALID_DOB")
     LocalDate dob;
+
+    Set<String> roles;
 }

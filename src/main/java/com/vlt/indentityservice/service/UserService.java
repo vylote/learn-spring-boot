@@ -1,7 +1,6 @@
 package com.vlt.indentityservice.service;
 
-import com.vlt.indentityservice.dto.request.UserCreationRequest;
-import com.vlt.indentityservice.dto.request.UserUpdateRequest;
+import com.vlt.indentityservice.dto.request.UserRequest;
 import com.vlt.indentityservice.dto.response.UserResponse;
 import com.vlt.indentityservice.entity.Role;
 import com.vlt.indentityservice.entity.User;
@@ -35,18 +34,20 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
-    public UserResponse createUser(UserCreationRequest request) {
+    public UserResponse createUser(UserRequest request) {
         if (userRepository.existsUserByUsername(request.getUsername()))
             throw new AppException(ErrorCode.RESOURCE_EXISTED);
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        var roles = new HashSet<Role>();
+        var roles = roleRepository.findAllById(request.getRoles());
 
         roleRepository.findById(PredefinedRole.USER.name())
                 .ifPresent(roles::add);
-        user.setRoles(roles);
+
+
+        user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -91,17 +92,22 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public UserResponse updateUser(UserUpdateRequest request, String id) {
+    public UserResponse updateUser(UserRequest request, String id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));       
 
         userMapper.updateUser(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
+        var roles = roleRepository.findAllById(request.getRoles());
+        roleRepository.findById(PredefinedRole.USER.name())
+                .ifPresent(roles::add);
+        user.setRoles(new HashSet<>(roles));
+
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
-    public UserResponse updateMyInfo(UserUpdateRequest request) {
+    public UserResponse updateMyInfo(UserRequest request) {
         // 1. Lấy username từ context (do Filter đã giải mã token và nhét vào đây)
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = authentication.getName();

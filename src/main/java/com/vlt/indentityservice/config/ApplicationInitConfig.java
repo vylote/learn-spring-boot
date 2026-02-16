@@ -2,7 +2,10 @@ package com.vlt.indentityservice.config;
 
 import java.util.HashSet;
 
+import com.vlt.indentityservice.entity.Permission;
 import com.vlt.indentityservice.entity.Role;
+import com.vlt.indentityservice.enums.PredefinedPermission;
+import com.vlt.indentityservice.repository.PermissionRepository;
 import com.vlt.indentityservice.repository.RoleRepository;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -27,8 +30,22 @@ public class ApplicationInitConfig {
     PasswordEncoder passwordEncoder;
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
+    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository, PermissionRepository permissionRepository) {
         return args -> {
+
+            var allPermissions = new HashSet<Permission>();
+
+            for (PredefinedPermission perm : PredefinedPermission.values()) {
+                Permission permission = permissionRepository.findById(perm.name())
+                        .orElseGet(() -> permissionRepository.save(
+                                Permission.builder()
+                                        .name(perm.name())
+                                        .description("Quyền: " + perm.name())
+                                        .build()
+                        ));
+                allPermissions.add(permission);
+            }
+
             // 1. Luôn đảm bảo Role USER đã tồn tại (cho người dùng đăng ký sau này dùng)
             if (roleRepository.findById(PredefinedRole.USER.name()).isEmpty()) {
                 roleRepository.save(Role.builder()
@@ -46,6 +63,7 @@ public class ApplicationInitConfig {
                                 Role.builder()
                                         .name(adminRoleName)
                                         .description("System Administrator") // Thêm mô tả nếu thích
+                                        .permissions(allPermissions)
                                         .build()
                         ));
 

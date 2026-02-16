@@ -27,7 +27,7 @@ public class PermissionService {
 
     public PermissionResponse create(PermissionRequest request) {
         if (permissionRepository.existsById(request.getName())) {
-            throw new AppException(ErrorCode.PERMISSION_EXISTED); //Cần tạo thêm mã lỗi này
+            throw new AppException(ErrorCode.RESOURCE_EXISTED);
         }
 
         Permission permission = permissionMapper.toPermission(request);
