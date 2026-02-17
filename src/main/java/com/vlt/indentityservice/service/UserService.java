@@ -1,6 +1,7 @@
 package com.vlt.indentityservice.service;
 
-import com.vlt.indentityservice.dto.request.UserRequest;
+import com.vlt.indentityservice.dto.request.UserCreationRequest;
+import com.vlt.indentityservice.dto.request.UserUpdateRequest;
 import com.vlt.indentityservice.dto.response.UserResponse;
 import com.vlt.indentityservice.entity.Role;
 import com.vlt.indentityservice.entity.User;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -34,19 +36,14 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
-    public UserResponse createUser(UserRequest request) {
+    public UserResponse create(UserCreationRequest request) {
         if (userRepository.existsUserByUsername(request.getUsername()))
             throw new AppException(ErrorCode.RESOURCE_EXISTED);
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        var roles = roleRepository.findAllById(request.getRoles());
-
-        roleRepository.findById(PredefinedRole.USER.name())
-                .ifPresent(roles::add);
-
-
+        var roles = mapRoles(request.getRoles());
         user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));
@@ -84,7 +81,7 @@ public class UserService {
         return userMapper.toUsersResponse(users);
     }
 
-    public void deleteUser(String id) {
+    public void delete(String id) {
         userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
 
@@ -92,22 +89,20 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public UserResponse updateUser(UserRequest request, String id) {
+    public UserResponse update(UserUpdateRequest request, String id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));       
 
         userMapper.updateUser(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        var roles = roleRepository.findAllById(request.getRoles());
-        roleRepository.findById(PredefinedRole.USER.name())
-                .ifPresent(roles::add);
+        var roles = mapRoles(request.getRoles());
         user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
-    public UserResponse updateMyInfo(UserRequest request) {
+    public UserResponse updateMyInfo(UserUpdateRequest request) {
         // 1. Lấy username từ context (do Filter đã giải mã token và nhét vào đây)
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = authentication.getName();
@@ -118,6 +113,22 @@ public class UserService {
         userMapper.updateUser(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
+        var roles = mapRoles(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
+
         return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    Set<Role> mapRoles(Set<String> roleNames) {
+        var roles = new HashSet<Role>();
+        // 2. Nếu người dùng có gửi danh sách Role lên, thì tìm và đổ hết vào giỏ
+        if (roleNames != null && !roleNames.isEmpty()) {
+            roles.addAll(roleRepository.findAllById(roleNames));
+        }
+        // 2. Chốt chặn an toàn: Kiểu gì cũng phải nhét quyền USER vào
+        roleRepository.findById(PredefinedRole.USER.name())
+                .ifPresent(roles::add);
+
+        return roles;
     }
 }

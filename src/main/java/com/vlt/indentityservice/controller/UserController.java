@@ -1,7 +1,8 @@
 package com.vlt.indentityservice.controller;
 
+import com.vlt.indentityservice.dto.request.UserUpdateRequest;
 import com.vlt.indentityservice.dto.response.ApiResponse;
-import com.vlt.indentityservice.dto.request.UserRequest;
+import com.vlt.indentityservice.dto.request.UserCreationRequest;
 import com.vlt.indentityservice.dto.response.UserResponse;
 import com.vlt.indentityservice.service.UserService;
 import jakarta.validation.Valid;
@@ -29,9 +30,9 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/create")
-    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserRequest request) {
+    public ApiResponse<UserResponse> create(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
-                .result(userService.createUser(request))
+                .result(userService.create(request))
                 .build();
     }
 
@@ -69,15 +70,15 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ApiResponse<String> deleteUser(@PathVariable("id") String id) {
-        userService.deleteUser(id);
+    public ApiResponse<String> delete(@PathVariable("id") String id) {
+        userService.delete(id);
         return ApiResponse.<String>builder()
                 .result("User deleted")
                 .build();
     }
 
     @PutMapping("/update/{id}")
-    public ApiResponse<UserResponse> updateUser(@RequestBody @Valid UserRequest request, @PathVariable("id") String id) {
+    public ApiResponse<UserResponse> update(@RequestBody @Valid UserUpdateRequest request, @PathVariable("id") String id) {
         // --- ĐẶT TRẠM GÁC LOG Ở ĐÂY ---
         log.info("=== BẮT ĐẦU KIỂM TRA QUYỀN GỌI API UPDATE ===");
         log.info("Đang cố gắng update User có ID: {}", id);
@@ -89,12 +90,12 @@ public class UserController {
         log.info("==============================================");
         // ------------------------------
         return ApiResponse.<UserResponse>builder()
-                .result(userService.updateUser(request, id))
+                .result(userService.update(request, id))
                 .build();
     }
 
     @PutMapping("/update/my-info")
-    public ApiResponse<UserResponse> updateMyInfo(@RequestBody @Valid UserRequest request) {
+    public ApiResponse<UserResponse> updateMyInfo(@RequestBody @Valid UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.updateMyInfo(request))
                 .build();

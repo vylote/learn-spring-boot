@@ -3,13 +3,7 @@ package com.vlt.indentityservice.controller;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.vlt.indentityservice.dto.request.PermissionRequest;
 import com.vlt.indentityservice.dto.response.ApiResponse;
@@ -47,6 +41,20 @@ public class PermissionController {
         permissionService.delete(name);
         return ApiResponse.<String>builder()
                 .result("Permission deleted")
+                .build();
+    }
+
+    @GetMapping("/{name}")
+    public ApiResponse<PermissionResponse> getPermission(@PathVariable String name) {
+        return ApiResponse.<PermissionResponse>builder()
+                .result(permissionService.getPermission(name))
+                .build();
+    }
+
+    @PutMapping("/update/{name}")
+    public ApiResponse<PermissionResponse> update(@PathVariable String name, @RequestBody PermissionRequest request) {
+        return ApiResponse.<PermissionResponse>builder()
+                .result(permissionService.update(name, request))
                 .build();
     }
 }

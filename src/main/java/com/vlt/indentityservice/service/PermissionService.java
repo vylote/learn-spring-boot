@@ -37,8 +37,9 @@ public class PermissionService {
 
     public List<PermissionResponse> getAll() {
         var permissions = permissionRepository.findAll();
-        
-        return permissions.stream().map(permissionMapper::toPermissionResponse).toList();
+
+        return permissions.stream()
+                .map(permissionMapper::toPermissionResponse).toList();
     }
 
     public void delete(String name) {
@@ -46,5 +47,19 @@ public class PermissionService {
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
 
         permissionRepository.delete(permission);
+    }
+
+    public PermissionResponse getPermission(String name) {
+        var permission = permissionRepository.findByName(name)
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+        return permissionMapper.toPermissionResponse(permission);
+    }
+
+    public PermissionResponse update(String name, PermissionRequest request) {
+        var permission = permissionRepository.findByName(name)
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+
+        permissionMapper.updatePermission(request, permission);
+        return permissionMapper.toPermissionResponse(permissionRepository.save(permission));
     }
 }

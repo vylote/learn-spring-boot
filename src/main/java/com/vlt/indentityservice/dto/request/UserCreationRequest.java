@@ -12,7 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserRequest {
+public class UserCreationRequest {
 
     // --- USERNAME ---
     @Size(min = 3, message = "INVALID_LENGTH") // Dùng chung cho lỗi độ dài
