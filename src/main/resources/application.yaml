@@ -10,7 +10,7 @@ spring:
     password: "3821"
   jpa:
     hibernate:
-      ddl-auto: update # tự tạo user_roles
+      ddl-auto: update # tự tạo user_roles (many to many)
     show-sql: true #xem log  
 
 jwt:

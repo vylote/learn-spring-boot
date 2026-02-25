@@ -40,7 +40,7 @@ public class ApplicationInitConfig {
                         .orElseGet(() -> permissionRepository.save(
                                 Permission.builder()
                                         .name(perm.name())
-                                        .description("Quyền: " + perm.name())
+                                        .description(perm.getDescription())
                                         .build()
                         ));
                 allPermissions.add(permission);
@@ -48,10 +48,12 @@ public class ApplicationInitConfig {
 
             // 1. Luôn đảm bảo Role USER đã tồn tại (cho người dùng đăng ký sau này dùng)
             if (roleRepository.findById(PredefinedRole.USER.name()).isEmpty()) {
-                roleRepository.save(Role.builder()
-                        .name(PredefinedRole.USER.name())
-                        .description("User role")
-                        .build());
+                roleRepository.save(
+                        Role.builder()
+                                .name(PredefinedRole.USER.name())
+                                .description(PredefinedRole.USER.getDescription())
+                                .build()
+                );
             }
 
             if (userRepository.findByUsername("admin").isEmpty()) {
@@ -62,7 +64,7 @@ public class ApplicationInitConfig {
                         .orElseGet(() -> roleRepository.save(
                                 Role.builder()
                                         .name(adminRoleName)
-                                        .description("System Administrator") // Thêm mô tả nếu thích
+                                        .description(PredefinedRole.ADMIN.getDescription()) // Thêm mô tả nếu thích
                                         .permissions(allPermissions)
                                         .build()
                         ));
