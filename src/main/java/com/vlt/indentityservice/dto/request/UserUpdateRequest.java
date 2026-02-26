@@ -1,5 +1,6 @@
 package com.vlt.indentityservice.dto.request;
 
+import com.vlt.indentityservice.validator.DobConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
@@ -15,7 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-    // --- PASSWORD ---
+
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             // Giữ nguyên regex độ khó mật khẩu của bạn
@@ -24,7 +25,6 @@ public class UserUpdateRequest {
     )
     String password;
 
-    // --- FIRSTNAME ---
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             regexp = "^[a-zA-Z]+$",
@@ -32,7 +32,6 @@ public class UserUpdateRequest {
     )
     String firstName;
 
-    // --- LASTNAME ---
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             regexp = "^[a-zA-Z]+$",
@@ -40,8 +39,7 @@ public class UserUpdateRequest {
     )
     String lastName;
 
-    // --- DOB ---
-    @Past(message = "INVALID_DOB")
+    @DobConstraint(min = 18, message = "INVALID_DOB")
     LocalDate dob;
 
     Set<String> roles;

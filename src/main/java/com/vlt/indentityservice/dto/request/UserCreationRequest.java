@@ -1,5 +1,6 @@
 package com.vlt.indentityservice.dto.request;
 
+import com.vlt.indentityservice.validator.DobConstraint;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -14,7 +15,6 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
 
-    // --- USERNAME ---
     @Size(min = 3, message = "INVALID_LENGTH") // Dùng chung cho lỗi độ dài
     @NotBlank(message = "MISSING_REQUIRED_FIELD") // Dùng chung cho lỗi bỏ trống
     @Pattern(
@@ -23,7 +23,6 @@ public class UserCreationRequest {
     )
     String username;
 
-    // --- PASSWORD ---
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             // Giữ nguyên regex độ khó mật khẩu của bạn
@@ -32,7 +31,6 @@ public class UserCreationRequest {
     )
     String password;
 
-    // --- FIRSTNAME ---
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             regexp = "^[a-zA-Z]+$",
@@ -40,7 +38,6 @@ public class UserCreationRequest {
     )
     String firstName;
 
-    // --- LASTNAME ---
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             regexp = "^[a-zA-Z]+$",
@@ -48,8 +45,8 @@ public class UserCreationRequest {
     )
     String lastName;
 
-    // --- DOB ---
-    @Past(message = "INVALID_DOB")
+    @DobConstraint(min = 18, message = "INVALID_DOB")
+    @NotNull
     LocalDate dob;
 
     Set<String> roles;
