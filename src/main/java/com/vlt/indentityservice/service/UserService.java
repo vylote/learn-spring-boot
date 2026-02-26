@@ -121,11 +121,9 @@ public class UserService {
 
     Set<Role> mapRoles(Set<String> roleNames) {
         var roles = new HashSet<Role>();
-        // 2. Nếu người dùng có gửi danh sách Role lên, thì tìm và đổ hết vào giỏ
         if (roleNames != null && !roleNames.isEmpty()) {
             roles.addAll(roleRepository.findAllById(roleNames));
         }
-        // 2. Chốt chặn an toàn: Kiểu gì cũng phải nhét quyền USER vào
         roleRepository.findById(PredefinedRole.USER.name())
                 .ifPresent(roles::add);
 

@@ -1,6 +1,7 @@
 package com.vlt.indentityservice.controller;
 
-import com.vlt.indentityservice.dto.request.RoleRequest;
+import com.vlt.indentityservice.dto.request.RoleCreationRequest;
+import com.vlt.indentityservice.dto.request.RoleUpdateRequest;
 import com.vlt.indentityservice.dto.response.ApiResponse;
 import com.vlt.indentityservice.dto.response.RoleResponse;
 import com.vlt.indentityservice.service.RoleService;
@@ -19,7 +20,7 @@ public class RoleController {
     RoleService roleService;
 
     @PostMapping("/create")
-    public ApiResponse<RoleResponse> create(@RequestBody RoleRequest request) {
+    public ApiResponse<RoleResponse> create(@RequestBody RoleCreationRequest request) {
         return ApiResponse.<RoleResponse>builder()
                 .result(roleService.create(request))
                 .build();
@@ -30,6 +31,13 @@ public class RoleController {
         roleService.delete(name);
         return ApiResponse.<String>builder()
                 .result("role deleted")
+                .build();
+    }
+
+    @PutMapping("/update/{name}")
+    public ApiResponse<RoleResponse> update(@PathVariable("name") String name, @RequestBody RoleUpdateRequest request) {
+        return ApiResponse.<RoleResponse>builder()
+                .result(roleService.update(request, name))
                 .build();
     }
 }

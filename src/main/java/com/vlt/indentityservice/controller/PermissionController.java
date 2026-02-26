@@ -2,10 +2,11 @@ package com.vlt.indentityservice.controller;
 
 import java.util.List;
 
+import com.vlt.indentityservice.dto.request.PermissionUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import com.vlt.indentityservice.dto.request.PermissionRequest;
+import com.vlt.indentityservice.dto.request.PermissionCreationRequest;
 import com.vlt.indentityservice.dto.response.ApiResponse;
 import com.vlt.indentityservice.dto.response.PermissionResponse;
 import com.vlt.indentityservice.service.PermissionService;
@@ -23,7 +24,7 @@ public class PermissionController {
     PermissionService permissionService;
 
     @PostMapping("/create")
-    public ApiResponse<PermissionResponse> create(@RequestBody PermissionRequest request) {
+    public ApiResponse<PermissionResponse> create(@RequestBody PermissionCreationRequest request) {
         return ApiResponse.<PermissionResponse>builder()
                 .result(permissionService.create(request))
                 .build();
@@ -52,7 +53,7 @@ public class PermissionController {
     }
 
     @PutMapping("/update/{name}")
-    public ApiResponse<PermissionResponse> update(@PathVariable String name, @RequestBody PermissionRequest request) {
+    public ApiResponse<PermissionResponse> update(@PathVariable String name, @RequestBody PermissionUpdateRequest request) {
         return ApiResponse.<PermissionResponse>builder()
                 .result(permissionService.update(name, request))
                 .build();

@@ -2,9 +2,10 @@ package com.vlt.indentityservice.service;
 
 import java.util.List;
 
+import com.vlt.indentityservice.dto.request.PermissionUpdateRequest;
 import org.springframework.stereotype.Service;
 
-import com.vlt.indentityservice.dto.request.PermissionRequest;
+import com.vlt.indentityservice.dto.request.PermissionCreationRequest;
 import com.vlt.indentityservice.dto.response.PermissionResponse;
 import com.vlt.indentityservice.entity.Permission;
 import com.vlt.indentityservice.exception.AppException;
@@ -25,7 +26,7 @@ public class PermissionService {
     PermissionRepository permissionRepository;
     PermissionMapper permissionMapper;
 
-    public PermissionResponse create(PermissionRequest request) {
+    public PermissionResponse create(PermissionCreationRequest request) {
         if (permissionRepository.existsById(request.getName())) {
             throw new AppException(ErrorCode.RESOURCE_EXISTED);
         }
@@ -55,7 +56,7 @@ public class PermissionService {
         return permissionMapper.toPermissionResponse(permission);
     }
 
-    public PermissionResponse update(String name, PermissionRequest request) {
+    public PermissionResponse update(String name, PermissionUpdateRequest request) {
         var permission = permissionRepository.findByName(name)
                 .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
 

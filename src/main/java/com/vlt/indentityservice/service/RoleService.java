@@ -1,6 +1,7 @@
 package com.vlt.indentityservice.service;
 
-import com.vlt.indentityservice.dto.request.RoleRequest;
+import com.vlt.indentityservice.dto.request.RoleCreationRequest;
+import com.vlt.indentityservice.dto.request.RoleUpdateRequest;
 import com.vlt.indentityservice.dto.response.RoleResponse;
 import com.vlt.indentityservice.entity.User;
 import com.vlt.indentityservice.exception.AppException;
@@ -29,7 +30,7 @@ public class RoleService {
     PermissionRepository permissionRepository;
     RoleMapper roleMapper;
 
-    public RoleResponse create(RoleRequest request) {
+    public RoleResponse create(RoleCreationRequest request) {
         if (roleRepository.existsById(request.getName()))
             throw new AppException(ErrorCode.RESOURCE_EXISTED);
 
@@ -55,5 +56,18 @@ public class RoleService {
          Hibernate đang theo dõi và sẽ tự động lưu các thay đổi này xuống DB)*/
 
         roleRepository.delete(role);
+    }
+
+    @Transactional
+    public RoleResponse update(RoleUpdateRequest request, String name) {
+        var role = roleRepository.findById(name)
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+
+        role.setDescription(request.getDescription());
+
+        var permissions = permissionRepository.findAllById(request.getPermissions());
+        role.setPermissions(new HashSet<>(permissions));
+
+        return roleMapper.toRoleResponse(roleRepository.save(role));
     }
 }
