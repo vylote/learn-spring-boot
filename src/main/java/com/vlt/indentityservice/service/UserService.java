@@ -60,7 +60,7 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-//    @PreAuthorize("hasRole('GET_USERS')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @PreAuthorize("hasAuthority('GET_USERS')")
     public List<UserResponse> getUsers() {
         log.info("In method getUsers");

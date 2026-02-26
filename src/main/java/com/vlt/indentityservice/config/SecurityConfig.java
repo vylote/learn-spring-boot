@@ -52,7 +52,8 @@ public class SecurityConfig {
                         .hasRole(PredefinedRole.ADMIN.name())
 
                         .anyRequest().authenticated());
-                //Cấu hình server này trở thành một Resource Server sử dụng chuẩn OAuth2 (cụ thể là JWT) để xác thực người dùng.
+                //Cấu hình server này trở thành một Resource Server sử dụng chuẩn OAuth2
+                // (cụ thể là JWT) để xác thực người dùng.
                 http.oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwtConfigurer -> 
                                 jwtConfigurer.decoder(jwtDecoder())

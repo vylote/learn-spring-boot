@@ -83,6 +83,7 @@ public class UserController {
         log.info("=== BẮT ĐẦU KIỂM TRA QUYỀN GỌI API UPDATE ===");
         log.info("Đang cố gắng update User có ID: {}", id);
         // Trích xuất thông tin người dùng đang gọi API từ Token
+        //
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
         log.info("Tên người gọi (Username): {}", authentication.getName());
