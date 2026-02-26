@@ -44,11 +44,7 @@ public class AuthenticationService {
     Instance (đối tượng), còn biến static thuộc về Class nên Spring sẽ bỏ qua.*/
     protected String SIGNER_KEY;
 
-    /* AuthenticationService(SecurityConfig securityConfig) {
-        this.securityConfig = securityConfig;
-    } */
-
-    public IntrospectResponse introspect(IntrospectRequest request)
+     public IntrospectResponse introspect(IntrospectRequest request)
             throws JOSEException, ParseException {
         var token = request.getToken();
 
@@ -115,9 +111,15 @@ public class AuthenticationService {
 
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
+
          if (!CollectionUtils.isEmpty(user.getRoles()))
-             user.getRoles().forEach(role ->
-                     stringJoiner.add(role.getName()));
+             user.getRoles().forEach(role -> {
+                 stringJoiner.add(role.getName());
+                 if (!CollectionUtils.isEmpty(role.getPermissions())) {
+                     role.getPermissions()
+                             .forEach(permission -> stringJoiner.add(permission.getName()));
+                 }
+             });
         
         return stringJoiner.toString();
     }
