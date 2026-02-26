@@ -24,11 +24,11 @@ public class UserCreationRequest {
     String username;
 
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
+    @Size(min = 8, message = "PASSWORD_TOO_SHORT")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%*?&])[A-Za-z\\d@#$!%*?&]+$",
             message = "WEAK_PASSWORD"
     )
-    @Size(min = 8, message = "PASSWORD_TOO_SHORT")
     String password;
 
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
@@ -46,7 +46,7 @@ public class UserCreationRequest {
     String lastName;
 
     @DobConstraint(min = 18, message = "INVALID_DOB")
-    @NotNull
+    @NotNull(message = "MISSING_REQUIRED_FIELD")
     LocalDate dob;
 
     Set<String> roles;

@@ -4,6 +4,7 @@ import com.vlt.indentityservice.validator.DobConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -18,29 +19,29 @@ import java.util.Set;
 public class UserUpdateRequest {
 
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
+    @Size(min = 8, message = "PASSWORD_TOO_SHORT")
     @Pattern(
-            // Giữ nguyên regex độ khó mật khẩu của bạn
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%*?&])[A-Za-z\\d@#$!%*?&]{8,}$",
-            message = "WEAK_PASSWORD" // Riêng mật khẩu nên để 1 mã riêng vì nó đặc thù
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%*?&])[A-Za-z\\d@#$!%*?&]+$",
+            message = "WEAK_PASSWORD"
     )
     String password;
 
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             regexp = "^[a-zA-Z]+$",
-            message = "INVALID_FORMAT" // Tái sử dụng INVALID_FORMAT
+            message = "INVALID_FORMAT"
     )
     String firstName;
 
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             regexp = "^[a-zA-Z]+$",
-            message = "INVALID_FORMAT" // Tái sử dụng INVALID_FORMAT
+            message = "INVALID_FORMAT"
     )
     String lastName;
 
     @DobConstraint(min = 18, message = "INVALID_DOB")
-    @NotNull
+    @NotNull(message = "MISSING_REQUIRED_FIELD")
     LocalDate dob;
 
     Set<String> roles;
