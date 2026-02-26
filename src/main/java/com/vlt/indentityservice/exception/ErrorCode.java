@@ -32,9 +32,10 @@ public enum ErrorCode {
     MISSING_REQUIRED_FIELD(1004, "Required field is missing", HttpStatus.BAD_REQUEST), 
     INVALID_LENGTH(1003, "Input length is invalid", HttpStatus.BAD_REQUEST), 
     INVALID_FORMAT(1005, "Input format is invalid", HttpStatus.BAD_REQUEST), 
-    INVALID_DOB(1007, "Invalid day of birth", HttpStatus.BAD_REQUEST),
+    INVALID_DOB(1007, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
     // Thêm cái này nếu bạn tách lỗi password yếu ra riêng như đã bàn
-    WEAK_PASSWORD(1006, "Password is too weak", HttpStatus.BAD_REQUEST),
+    PASSWORD_TOO_SHORT(1006, "Password must be at least {min} characters", HttpStatus.BAD_REQUEST),
+    WEAK_PASSWORD(1007, "Password must include uppercase, lowercase, numbers, and special characters", HttpStatus.BAD_REQUEST),
     ;
 
     int code;

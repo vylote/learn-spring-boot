@@ -15,33 +15,33 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
 
-    @Size(min = 3, message = "INVALID_LENGTH") // Dùng chung cho lỗi độ dài
-    @NotBlank(message = "MISSING_REQUIRED_FIELD") // Dùng chung cho lỗi bỏ trống
+    @Size(min = 3, message = "INVALID_LENGTH")
+    @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9]+$",
-            message = "INVALID_FORMAT" // Dùng chung cho lỗi sai định dạng (regex)
+            message = "INVALID_FORMAT"
     )
     String username;
 
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
-            // Giữ nguyên regex độ khó mật khẩu của bạn
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%*?&])[A-Za-z\\d@#$!%*?&]{8,}$",
-            message = "WEAK_PASSWORD" // Riêng mật khẩu nên để 1 mã riêng vì nó đặc thù
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%*?&])[A-Za-z\\d@#$!%*?&]+$",
+            message = "WEAK_PASSWORD"
     )
+    @Size(min = 8, message = "PASSWORD_TOO_SHORT")
     String password;
 
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             regexp = "^[a-zA-Z]+$",
-            message = "INVALID_FORMAT" // Tái sử dụng INVALID_FORMAT
+            message = "INVALID_FORMAT"
     )
     String firstName;
 
     @NotBlank(message = "MISSING_REQUIRED_FIELD")
     @Pattern(
             regexp = "^[a-zA-Z]+$",
-            message = "INVALID_FORMAT" // Tái sử dụng INVALID_FORMAT
+            message = "INVALID_FORMAT"
     )
     String lastName;
 

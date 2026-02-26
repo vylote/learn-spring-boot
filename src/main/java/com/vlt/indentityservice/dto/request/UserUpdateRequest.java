@@ -2,7 +2,7 @@ package com.vlt.indentityservice.dto.request;
 
 import com.vlt.indentityservice.validator.DobConstraint;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -40,6 +40,7 @@ public class UserUpdateRequest {
     String lastName;
 
     @DobConstraint(min = 18, message = "INVALID_DOB")
+    @NotNull
     LocalDate dob;
 
     Set<String> roles;
